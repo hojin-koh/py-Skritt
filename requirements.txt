@@ -1,0 +1,6 @@
+-e .
+
+# Development tools
+pytest
+#mypy
+#python-lsp-server

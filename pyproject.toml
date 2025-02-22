@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Skritt"
+version = "0.0.1"
+license = {text = "Apache-2.0"}
+authors = [
+    { name="Hojin Koh", email="hojin-koh@users.noreply.github.com" },
+]
+description = "Python port of the original Skritt light scripting framework "
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = ["plumbum", "colorama", "python-dotenv"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Development Status :: 3 - Alpha",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/hojin-koh/py-Skritt"
+"Bug Tracker" = "https://github.com/hojin-koh/py-Skritt/issues"
