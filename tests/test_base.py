@@ -16,51 +16,52 @@
 
 # Tests related to basic running flow
 
-import typing
+from typing import Self
 
 import pytest
 
-from Skritt import Step
+from Skritt.base import StepBase
 
-# Mock class to test `Step` functionality
-class NormalStep(Step):
-    def __init__(self, should_check: bool, *args: str):
+# Mock class to test `StepBase` functionality
+class NormalStep(StepBase):
+    def __init__(self, should_check: bool, *args: str) -> None:
         super().__init__(*args)
         self.should_check = should_check
         self.main_called = False
 
-    def check(self: typing.Self) -> bool:
+    def check(self: Self) -> bool:
         return self.should_check
 
-    def main(self: typing.Self) -> int:
+    def main(self: Self) -> int:
         self.main_called = True
         return 42
 
 # Test cases
-def test_abstract_main():
+def test_abstract_main() -> None:
     """Test that invoking an undefined 'main' raises an exception."""
-    class IncompleteStep(Step):
+    class IncompleteStep(StepBase):
         pass
 
+    # Should raise because `main` is not implemented
     with pytest.raises(TypeError):
-        IncompleteStep()  # Should raise because `main` is not implemented
+        IncompleteStep() # type: ignore[abstract]
 
-def test_execute_return_main_return():
-    """Test invoke() returns the result of main() when check() is True."""
+def test_execute_return_main_return() -> None:
+    """Test invoke() returns the result of main() when check() returns True."""
     step = NormalStep(should_check=True)
     result = step.execute()
     assert result == 42
     assert step.main_called is True
 
-def test_invoke_return_main_called():
-    """Test invoke() returns the result of main() when check() is True."""
+def test_invoke_return_main_called() -> None:
+    """Test invoke() returns the result of main() when check() returns True."""
     step = NormalStep(should_check=True)
     result = step.invoke()
     assert result == 42
     assert step.main_called is True
 
-def test_invoke_return_no_main_called():
-    """Test invoke() returns 0 when check() is False and main() is not called."""
+def test_invoke_return_no_main_called() -> None:
+    """Test invoke() returns 0 when check() returns False and main() is not called."""
     step = NormalStep(should_check=False)
     result = step.invoke()
     assert result == 0
