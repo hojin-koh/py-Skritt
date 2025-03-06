@@ -19,6 +19,7 @@ from collections.abc import Generator
 from typing import Protocol, Self
 
 from abc import ABC, abstractmethod
+from argparse import ArgumentParser, Namespace, _ArgumentGroup
 
 from collections import defaultdict
 
@@ -42,6 +43,11 @@ class StepBase(ABC):
 
     def __init__(self, *args: str) -> None:
         self.mLifecycle: defaultdict[str, list[tuple[str, TypeHookFunc[Self]]]] = defaultdict(list)
+        self.aCmdline: list[str] = list(args)
+        self.parser = ArgumentParser(allow_abbrev=False, exit_on_error=False)
+        self.mParserGroups: dict[str, _ArgumentGroup] = {}
+
+    # The main lifecycle
 
     def check(self) -> bool:
         return True
@@ -52,6 +58,8 @@ class StepBase(ABC):
 
     # Invoke: include check
     def invoke(self) -> int:
+        if not hasattr(self, 'args'):
+            self.parseArgs()
         if self.check():
             rtn = self.execute()
         else:
@@ -99,3 +107,20 @@ class StepBase(ABC):
         
         for name, func in self.listHooks(nameLifecycle):
             self.invokeHookFunc(name, func)
+
+    # argparse-related things
+
+    def parseArgs(self) -> None:
+        """
+        Actually parse the commandline arguments stored in this object, and store the
+        results as self.args
+        """
+        self.args: Namespace = self.parser.parse_intermixed_args(self.aCmdline)
+
+    def getParser(self, nameGroup: str = "Skritt") -> _ArgumentGroup:
+        """
+        Get the argparse group to add argument definitions
+        """
+        if nameGroup not in self.mParserGroups:
+            self.mParserGroups[nameGroup] = self.parser.add_argument_group(nameGroup)
+        return self.mParserGroups[nameGroup]
