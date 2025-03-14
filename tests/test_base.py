@@ -16,23 +16,22 @@
 
 # Tests related to basic running flow
 
-from typing import Self
-
 import pytest
 
 from Skritt.base import StepBase
 
-# Mock class to test `StepBase` functionality
+
 class NormalStep(StepBase):
+    """Mock class to test `StepBase` hook calling functionality"""
     def __init__(self, should_check: bool, *args: str) -> None:
         super().__init__(*args)
         self.should_check = should_check
         self.main_called = False
 
-    def check(self: Self) -> bool:
+    def check(self) -> bool:
         return self.should_check
 
-    def main(self: Self) -> int:
+    def main(self) -> int:
         self.main_called = True
         return 42
 
