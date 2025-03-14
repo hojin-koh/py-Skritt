@@ -28,7 +28,7 @@ class NormalStep(StepBase):
         self.should_check = should_check
         self.main_called = False
 
-    def check(self) -> bool:
+    def needed(self) -> bool:
         return self.should_check
 
     def main(self) -> int:
@@ -46,21 +46,21 @@ def test_abstract_main() -> None:
         IncompleteStep() # type: ignore[abstract]
 
 def test_execute_return_main_return() -> None:
-    """Test invoke() returns the result of main() when check() returns True."""
+    """Test invoke() returns the result of main() when needed() returns True."""
     step = NormalStep(should_check=True)
     result = step.execute()
     assert result == 42
     assert step.main_called is True
 
 def test_invoke_return_main_called() -> None:
-    """Test invoke() returns the result of main() when check() returns True."""
+    """Test invoke() returns the result of main() when needed() returns True."""
     step = NormalStep(should_check=True)
     result = step.invoke()
     assert result == 42
     assert step.main_called is True
 
 def test_invoke_return_no_main_called() -> None:
-    """Test invoke() returns 0 when check() returns False and main() is not called."""
+    """Test invoke() returns 0 when needed() returns False and main() is not called."""
     step = NormalStep(should_check=False)
     result = step.invoke()
     assert result == 0

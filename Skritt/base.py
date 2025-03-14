@@ -49,18 +49,18 @@ class StepBase(ABC):
 
     # The main lifecycle
 
-    def check(self) -> bool:
+    def needed(self) -> bool:
         return True
 
     @abstractmethod
     def main(self) -> int:
         return 0
 
-    # Invoke: include check
+    # Invoke: include need-to-run check
     def invoke(self) -> int:
         if not hasattr(self, 'args'):
             self.parseArgs()
-        if self.check():
+        if self.needed():
             rtn = self.execute()
         else:
             rtn = 0
