@@ -1,4 +1,7 @@
 
 
-#from .skritt import Step
+from .res import Resource
 
+__all__ = (
+        'Resource',
+        )
