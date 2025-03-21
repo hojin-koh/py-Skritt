@@ -12,7 +12,7 @@ authors = [
 description = "Python port of the original Skritt light scripting framework "
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["plumbum", "colorama", "python-dotenv"]
+dependencies = ["plumbum", "loguru", "python-dotenv"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: Apache Software License",

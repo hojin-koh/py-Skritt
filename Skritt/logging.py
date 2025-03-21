@@ -17,18 +17,18 @@
 import os
 import sys
 
-def setupFdForDisplay(num: int = 6) -> bool:
-    """
-    Open a fd to write to stderr without logging as in the legacy framework.
-    Mainly for subprocesses to inherit this file descriptor to display
-    things like progress bars that don't need to go into the log file.
+from .res import Resource
+from loguru import logger
 
-    Return False and no-op if that fd is already open, otherwise open it and
-    return True.
+class ResourceLogger(Resource):
     """
-    try:
-        os.fstat(num) # Check if already open
-        return False
-    except OSError:
-        os.dup2(sys.stderr.fileno(), num, inheritable=True)
-        return True
+    Configure the global logger for this process and expose the logger instance
+    as public member.
+    """
+    def initialize(self) -> None:
+        logger.remove(0)
+        logger.add(sys.stderr, level="INFO", format="<level>{time:YYYYMMDD HHmmss} [{level.name[0]}]</level> {file}:{line} <level>{message}</level>")
+        self.logger = logger
+
+    def setFile(self, filename: str) -> None:
+        self.logger.add(filename, level="DEBUG", enqueue=True, format="{time:YYYYMMDD HHmmss} [{level.name[0]}] {file}:{line} {message}")
