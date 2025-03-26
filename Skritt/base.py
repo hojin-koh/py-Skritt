@@ -50,7 +50,16 @@ class StepBase(ABC):
     # The main lifecycle
 
     def needed(self) -> bool:
+        """
+        Function to be overriden to check if this Step need to run
+        """
         return True
+
+    def cleanup(self) -> None:
+        """
+        Function to be overriden to do cleanups after running this Step
+        """
+        pass
 
     @abstractmethod
     def main(self) -> int:
@@ -68,8 +77,10 @@ class StepBase(ABC):
 
     # Execute: main life cycle
     def execute(self) -> int:
-        rtn = self.main()
-        return rtn
+        try:
+            return self.main()
+        finally:
+            self.cleanup()
 
     def addHook(self, nameLifecycle: str, nameFunc: str, func: TypeHookFunc[Self], atBegin: bool = False) -> None:
         """
