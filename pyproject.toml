@@ -23,3 +23,6 @@ classifiers = [
 [project.urls]
 "Homepage" = "https://github.com/hojin-koh/py-Skritt"
 "Bug Tracker" = "https://github.com/hojin-koh/py-Skritt/issues"
+
+[tool.pytest.ini_options]
+addopts = "--forked" # Because some things to be tested are per-process

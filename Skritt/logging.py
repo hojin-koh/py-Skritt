@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import sys
 
 from .res import Resource
@@ -30,5 +29,12 @@ class ResourceLogger(Resource):
         logger.add(sys.stderr, level="INFO", format="<level>{time:YYYYMMDD HHmmss} [{level.name[0]}]</level> {file}:{line} <level>{message}</level>")
         self.logger = logger
 
-    def setFile(self, filename: str) -> None:
-        self.logger.add(filename, level="DEBUG", enqueue=True, format="{time:YYYYMMDD HHmmss} [{level.name[0]}] {file}:{line} {message}")
+    def setFile(self, filename: str) -> int:
+        """
+        Setup a file as the logging sink, and return an integer handler to later
+        be used to remove the sink through removeSink()
+        """
+        return self.logger.add(filename, level="DEBUG", enqueue=True, format="{time:YYYYMMDD HHmmss} [{level.name[0]}] {file}:{line} {message}")
+
+    def removeSink(self, handler: int) -> None:
+        self.logger.remove(handler)

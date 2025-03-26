@@ -2,6 +2,7 @@
 
 # Development tools
 pytest
+pytest-forked
 #mypy
 #python-lsp-server
 #pyflakes
