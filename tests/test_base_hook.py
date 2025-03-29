@@ -63,7 +63,7 @@ def test_empty_lifecycle_invoke(step: MockStep) -> None:
     """
     Test that invoking an empty lifecycle has no effect.
     """
-    step.invokeHook("nonexistent")
+    step.invokeLifecycle("nonexistent")
     assert step.stateTest == []
 
 def test_list_lifecycles(step: MockStep) -> None:
@@ -82,7 +82,7 @@ def test_empty_lifecycle_not_added(step: MockStep) -> None:
     """
     Test that invoking an empty lifecycle doesn't get it added by accident.
     """
-    step.invokeHook("nonexistent")
+    step.invokeLifecycle("nonexistent")
 
     lifecycles = list(step.listLifecycles())
     assert "nonexistent" not in lifecycles
@@ -98,7 +98,7 @@ def test_invoke_hook_executes_functions(step: MockStep) -> None:
     step.addHook(nameLifecycle, nameHook1, getMockHook(nameHook1))
     step.addHook(nameLifecycle, nameHook2, getMockHook(nameHook2))
 
-    step.invokeHook(nameLifecycle)
+    step.invokeLifecycle(nameLifecycle)
     assert step.stateTest == [nameHook1, nameHook2]
 
 def test_hooks_at_beginning(step: MockStep) -> None:
@@ -112,5 +112,5 @@ def test_hooks_at_beginning(step: MockStep) -> None:
     step.addHook(nameLifecycle, nameHook2, getMockHook(nameHook2))
     step.addHook(nameLifecycle, nameHook1, getMockHook(nameHook1), atBegin=True)
 
-    step.invokeHook(nameLifecycle)
+    step.invokeLifecycle(nameLifecycle)
     assert step.stateTest == [nameHook1, nameHook2]

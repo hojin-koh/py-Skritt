@@ -47,7 +47,7 @@ class StepBase(ABC):
         self.parser = ArgumentParser(allow_abbrev=False, exit_on_error=False)
         self.mParserGroups: dict[str, _ArgumentGroup] = {}
 
-    # The main lifecycle
+    # The main lifecycle functions to be overriden: needed, cleanup, main
 
     def needed(self) -> bool:
         """
@@ -109,7 +109,7 @@ class StepBase(ABC):
     def invokeHookFunc(self, name: str, func: TypeHookFunc[Self]) -> None:
         func(self)
 
-    def invokeHook(self, nameLifecycle: str) -> None:
+    def invokeLifecycle(self, nameLifecycle: str) -> None:
         """
         Call all functions in a certain lifecycle in order, passing `self`.
         """
