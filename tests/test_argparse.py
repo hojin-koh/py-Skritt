@@ -33,9 +33,9 @@ def test_parse_args() -> None:
     parser = step.getParser()
     parser.add_argument("--option1")
     parser.add_argument("--option2")
-    
+
     step.parseArgs()
-    
+
     assert step.args.option1 == "value1"
     assert step.args.option2 == "value2"
 

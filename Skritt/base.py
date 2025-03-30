@@ -98,7 +98,7 @@ class StepBase(ABC):
         Yield the names of all defined lifecycles in the current step.
         """
         yield from self.mLifecycle.keys()
-        
+
     def listHooks(self, nameLifecycle: str) -> Generator[tuple[str, TypeHookFunc[Self]]]:
         """
         Yield all hooks (name and callable) associated with the given lifecycle.
@@ -115,7 +115,7 @@ class StepBase(ABC):
         """
         if nameLifecycle not in self.mLifecycle:
             return
-        
+
         for name, func in self.listHooks(nameLifecycle):
             self.invokeHookFunc(name, func)
 

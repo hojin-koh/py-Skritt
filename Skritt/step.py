@@ -44,7 +44,7 @@ class Step(StepBase):
         # Configure logging based on arguments
         if self.args.debug:
             self.resLogging.setStderr('DEBUG')
-        
+
         if self.args.logfile:
             self.hLogfile: int = self.resLogging.setFile(self.args.logfile)
 
@@ -69,6 +69,8 @@ class Step(StepBase):
         finally:
             self.cleanup()
             self.invokeLifecycle("cleanup")
+            if hasattr(self, 'hLogfile'):
+                self.resLogging.removeSink(self.hLogfile)
 
     def execute(self) -> int:
         try:
