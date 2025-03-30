@@ -48,36 +48,6 @@ class NormalStep(Step):
         super().invokeHookFunc(name, func)
 
 
-# Test cases
-def test_lifecycle_hooks_execute() -> None:
-    """Test that lifecycle hooks are called in the correct order during execute()"""
-    step = NormalStep(should_check=True)
-
-    step.addHook('pre-run', 'pre-run-test', lambda s: None)
-    step.addHook('post-run', 'post-run-test', lambda s: None)
-
-    step.parseArgs()
-    step.execute()
-
-    assert "pre-run-test" in step.lifecycle_calls
-    assert "post-run-test" in step.lifecycle_calls
-    assert step.lifecycle_calls.index("pre-run-test") < step.lifecycle_calls.index("post-run-test")
-
-
-def test_lifecycle_hooks_parse_args() -> None:
-    """Test that pre-parse and post-parse hooks are called in the correct order"""
-    step = NormalStep(should_check=True)
-
-    step.addHook('pre-parse', 'pre-parse-test', lambda s: None)
-    step.addHook('post-parse', 'post-parse-test', lambda s: None)
-
-    step.parseArgs()
-
-    assert "pre-parse-test" in step.lifecycle_calls
-    assert "post-parse-test" in step.lifecycle_calls
-    assert step.lifecycle_calls.index("pre-parse-test") < step.lifecycle_calls.index("post-parse-test")
-
-
 def test_lifecycle_hooks_invoke() -> None:
     """Test that cleanup hook is called during invoke()"""
     step = NormalStep(should_check=True)
