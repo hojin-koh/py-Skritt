@@ -67,20 +67,20 @@ class StepBase(ABC):
 
     # Invoke: include need-to-run check
     def invoke(self) -> int:
-        if not hasattr(self, 'args'):
-            self.parseArgs()
-        if self.needed():
-            rtn = self.execute()
-        else:
-            rtn = 0
-        return rtn
+        try:
+            if not hasattr(self, 'args'):
+                self.parseArgs()
+            if self.needed():
+                rtn = self.execute()
+            else:
+                rtn = 0
+            return rtn
+        finally:
+            self.cleanup()
 
     # Execute: main life cycle
     def execute(self) -> int:
-        try:
-            return self.main()
-        finally:
-            self.cleanup()
+        return self.main()
 
     def addHook(self, nameLifecycle: str, nameFunc: str, func: TypeHookFunc[Self], atBegin: bool = False) -> None:
         """

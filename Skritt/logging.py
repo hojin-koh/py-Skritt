@@ -25,16 +25,26 @@ class ResourceLogger(Resource):
     as public member.
     """
     def initialize(self) -> None:
-        logger.remove(0)
-        logger.add(sys.stderr, level="INFO", format="<level>{time:YYYYMMDD HHmmss} [{level.name[0]}]</level> {file}:{line} <level>{message}</level>")
         self.logger = logger
+        logger.remove(0)
+        self.setStderr()
+
+    def getFormat(self) -> str:
+        return '<level>{time:YYYYMMDD HHmmss} [{level.name[0]}]</level> {file}:{line} <level>{message}</level>'
+
+    def setStderr(self, level: str = 'INFO') -> int:
+        if hasattr(self, 'hStderr'):
+            self.logger.remove(self.hStderr)
+        handle = self.logger.add(sys.stderr, level=level, format=self.getFormat())
+        self.hStderr: int = handle
+        return handle
 
     def setFile(self, filename: str) -> int:
         """
         Setup a file as the logging sink, and return an integer handler to later
         be used to remove the sink through removeSink()
         """
-        return self.logger.add(filename, level="DEBUG", enqueue=True, format="{time:YYYYMMDD HHmmss} [{level.name[0]}] {file}:{line} {message}")
+        return self.logger.add(filename, level="DEBUG", enqueue=True, format=self.getFormat())
 
     def removeSink(self, handler: int) -> None:
         self.logger.remove(handler)

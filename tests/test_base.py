@@ -55,7 +55,6 @@ def test_execute_return_main_return() -> None:
     result = step.execute()
     assert result == 42
     assert step.main_called is True
-    assert step.cleanup_called is True
 
 def test_invoke_return_main_called() -> None:
     """Test invoke() returns the result of main() when needed() returns True."""
@@ -71,4 +70,4 @@ def test_invoke_return_no_main_called() -> None:
     result = step.invoke()
     assert result == 0
     assert step.main_called is False
-    assert step.cleanup_called is False
+    assert step.cleanup_called is True # At invoke level, cleanup should always be called
