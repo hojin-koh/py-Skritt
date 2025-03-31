@@ -27,6 +27,8 @@ class TypeHookFunc[C: StepBase](Protocol):
     """
     What the hook functions should look like: func(step)
     """
+    __name__: str
+    __qualname__: str
     def __call__(self, step: C) -> None:
         pass
 

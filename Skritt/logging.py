@@ -26,11 +26,13 @@ class ResourceLogger(Resource):
     """
     def initialize(self) -> None:
         self.logger = logger
+        # For subprocess logging
+        logger.level('PROC', no=22, color="<white>")
         logger.remove(0)
         self.setStderr()
 
     def getFormat(self) -> str:
-        return '<level>{time:YYYYMMDD HHmmss} [{level.name[0]}]</level> {file}:{line} <level>{message}</level>'
+        return '<level>{time:YYYYMMDD HHmmss} [{level.name[0]}] {message}</level>'
 
     def setStderr(self, level: str = 'INFO') -> int:
         if hasattr(self, 'hStderr'):

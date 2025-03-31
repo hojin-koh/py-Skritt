@@ -21,6 +21,8 @@ from Skritt.base import TypeHookFunc
 
 from Skritt import Step
 
+import pytest
+
 class NormalStep(Step):
     """Mock class to test `Step` hook calling functionality"""
     def __init__(self, *args: str, should_check: bool) -> None:
@@ -100,3 +102,10 @@ def test_check_flag_not_needed() -> None:
     assert result == 1
     assert step.main_called is False
     assert step.cleanup_called is True
+
+
+def test_help_flag() -> None:
+    """Test that --help flag should show help and exit, without generating extra exceptions"""
+    step = NormalStep("--help", should_check=False)
+    with pytest.raises(SystemExit):
+        step.invoke()

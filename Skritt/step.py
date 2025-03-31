@@ -14,6 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Self
+from Skritt.base import TypeHookFunc
+
+from datetime import datetime, timedelta
+
 from .base import StepBase
 from .logging import ResourceLogger
 
@@ -29,11 +34,43 @@ class Step(StepBase):
 
         parser = self.getParser()
         parser.add_argument("--logfile", help="File to write log in")
+        parser.add_argument("--debug", action='store_true', help="Show debug message on screen")
+        parser.add_argument("--notitle", action='store_true', help="Disable showing fancy begin/end banners")
         parser.add_argument("--force", action='store_true', help="Run the step even if not necessary")
         parser.add_argument("--check", action='store_true', help="Check if need to run or not and return 0 if need to run")
-        parser.add_argument("--debug", action='store_true', help="Show debug message on screen")
 
-    # Standard lifecycle hooks
+    # Additional logging
+    def invokeHookFunc(self, name: str, func: TypeHookFunc[Self]) -> None:
+        self.logger.debug(F"Hook {name}: {func.__qualname__}()")
+        super().invokeHookFunc(name, func)
+
+    def invokeLifecycle(self, nameLifecycle: str) -> None:
+        """
+        Call all functions in a certain lifecycle in order, passing `self`.
+        """
+        self.logger.debug(F"Lifecycle {self.__class__.__qualname__}::{nameLifecycle}")
+        if nameLifecycle not in self.mLifecycle:
+            return
+
+        for name, func in self.listHooks(nameLifecycle):
+            self.invokeHookFunc(name, func)
+
+    # Fancy logging
+    def showHeader(self) -> None:
+        titleScript = F"{self.__class__.__qualname__} {' '.join(self.aCmdline)}"
+        if len(titleScript) > 160:
+            titleScript = titleScript[:160] + " ..."
+        self.logger.success(titleScript)
+        self.timeBegin: datetime = datetime.now()
+
+    def showFooter(self, rtn: int) -> None:
+        elapsed: timedelta = datetime.now() - self.timeBegin
+        if rtn == 0:
+            self.logger.success(F"Retrun 0 in {elapsed}\n")
+        else:
+            self.logger.error(F"Retrun {rtn} in {elapsed}\n")
+
+    # Standard lifecycle hooks, with logging added
     def parseArgs(self) -> None:
         """
         Same as StepBase's parseArgs, but add preparse and postparse lifecycle
@@ -48,9 +85,12 @@ class Step(StepBase):
         if self.args.logfile:
             self.hLogfile: int = self.resLogging.setFile(self.args.logfile)
 
+        if not self.args.notitle:
+            self.showHeader()
         self.invokeLifecycle("post-parse")
 
     def invoke(self) -> int:
+        rtn = -1
         try:
             if not hasattr(self, 'args'):
                 self.parseArgs()
@@ -67,8 +107,12 @@ class Step(StepBase):
                 rtn = 0
             return rtn
         finally:
-            self.cleanup()
-            self.invokeLifecycle("cleanup")
+            # Guard against the "--help" scenario to avoid generating unnecessary exceptions
+            if hasattr(self, 'args'):
+                self.cleanup()
+                self.invokeLifecycle("cleanup")
+                if not self.args.notitle:
+                    self.showFooter(rtn)
             if hasattr(self, 'hLogfile'):
                 self.resLogging.removeSink(self.hLogfile)
 
