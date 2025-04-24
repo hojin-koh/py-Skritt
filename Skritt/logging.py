@@ -46,7 +46,7 @@ class ResourceLogger(Resource):
         Setup a file as the logging sink, and return an integer handler to later
         be used to remove the sink through removeSink()
         """
-        return self.logger.add(filename, level="DEBUG", enqueue=True, format=self.getFormat())
+        return self.logger.add(filename, level="DEBUG", format=self.getFormat())
 
     def removeSink(self, handler: int) -> None:
         self.logger.remove(handler)
