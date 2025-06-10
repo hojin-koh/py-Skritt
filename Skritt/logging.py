@@ -14,10 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import sys
 
-from .res import Resource
+import loguru._logger
 from loguru import logger
+
+from .res import Resource
+
+type TypeLogger = loguru.Logger | logging.Logger
 
 class ResourceLogger(Resource):
     """

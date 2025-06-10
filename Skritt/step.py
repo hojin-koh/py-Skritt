@@ -14,13 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from collections.abc import Sequence
 from typing import Self
 from Skritt.base import TypeHookFunc
 
+import asyncio
 from datetime import datetime, timedelta
 
 from .base import StepBase
 from .logging import ResourceLogger
+from .subprocess import shellrun, ThreadForSubprocess
 
 class Step(StepBase):
     """
@@ -122,3 +125,11 @@ class Step(StepBase):
             return self.main()
         finally:
             self.invokeLifecycle("post-run")
+
+    def shellout(self, *args: Sequence[str]) -> int:
+        return asyncio.run(shellrun(self.logger, args))
+
+    def shellbg(self, *args: Sequence[str]) -> ThreadForSubprocess:
+        t = ThreadForSubprocess(target=self.shellout, args=args)
+        t.start()
+        return t
